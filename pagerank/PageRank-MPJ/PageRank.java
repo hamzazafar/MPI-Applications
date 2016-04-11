@@ -66,7 +66,6 @@ public class PageRank
       //broadcast outlinks
       MPI.COMM_WORLD.Bcast(numOfOutLinks,0,numOfPages,MPI.INT,0);
   
-
       //the number of page ranks each process will calculate
       chunkSize = numOfPages / worldSize;
       inlinks = new int [chunkSize][];
@@ -79,26 +78,20 @@ public class PageRank
         }
 
         for(int i=1;i<worldSize;i++){
-     
           int [][] sendArr = new int[chunkSize][];
-
           for(int j=0;j<chunkSize;j++){
             sendArr[j]=data[j + (chunkSize * i)];
           }
-
           Object [] sendObjArr = new Object[1]; 
           sendObjArr[0] = (Object) sendArr;
-     
           MPI.COMM_WORLD.Send(sendObjArr,0,1,MPI.OBJECT,i,0);
         }
 
       }
       else{
         Object [] recvObjArr = new Object[1];
-
         MPI.COMM_WORLD.Recv(recvObjArr,0,1,MPI.OBJECT,0,0);
         inlinks = (int [][]) recvObjArr[0];
-       
       }
       
       while (iterations > 0){
@@ -107,7 +100,6 @@ public class PageRank
         for(int i=0;i<numOfPages;i++){
           newPageRanks[i] = 0;
         }
- 
         danglingSum = 0;
         for(int i=0; i<chunkSize;i++){
           if(numOfOutLinks[i+(rank*chunkSize)] == 0){
@@ -119,9 +111,7 @@ public class PageRank
         //AllReduce the dangling sum
         double [] reduceArr = new double[1];
         reduceArr[0] = danglingSum;
-
         MPI.COMM_WORLD.Allreduce(reduceArr,0,reduceArr,0,1,MPI.DOUBLE,MPI.SUM);
- 
         danglingSum = reduceArr[0];
        
         for(int i=0;i<chunkSize;i++){
@@ -197,12 +187,9 @@ public class PageRank
   }
 
   public void execute(){
-    
-        
     MPI.Finalize();
   }
   public static void main(String args[]) throws Exception{
-    
     PageRank pg = new PageRank(MPI.Init(args));
     pg.execute();
   }
