@@ -1,1 +1,3 @@
-MPI version of PageRank Algorithm 
+MPI Applications 
+- PageRank
+- K-Means Clustering
